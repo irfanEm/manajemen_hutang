@@ -13,3 +13,5 @@ $routes->get('/test', static function(){
 
 $routes->get('/login', 'Auth::login');
 $routes->post('/login', 'Auth::doLogin');
+
+$routes->get('/dashboard', 'Home::dashboard', ['filter' => 'auth']);
