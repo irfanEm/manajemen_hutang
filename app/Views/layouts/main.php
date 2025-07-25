@@ -136,8 +136,3 @@
 
 </body>
 </html>
-
-selanjutnya mari kita lanjut ke menu agen.
-
-untuk agen saya ingin tablenya terdiri dari : id, kode_agen, nama_agen, created_at, updated_at, dan deleted_at. buatkan file migrasi, model, seeder dan juga form untuk crud beserta route dan controllernya.
-pada bagian index / 
