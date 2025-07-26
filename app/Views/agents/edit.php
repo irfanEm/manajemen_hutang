@@ -118,6 +118,16 @@
         <input type="text" class="form-control" id="nama_agen" name="nama_agen" value="<?= esc($agent['nama_agen']) ?>" required>
       </div>
 
+      <div class="mb-3">
+        <label for="tanggal_input_saldo" class="form-label">Tanggal Input Saldo</label>
+        <input type="date" class="form-control" id="tanggal_input_saldo" name="tanggal_input_saldo" value="<?= esc(date('Y-m-d', strtotime($agent['tanggal_input_saldo'] ?? ''))) ?>" >
+      </div>
+
+      <div class="mb-3">
+        <label for="sisa_hutang" class="form-label">Sisa Hutang</label>
+        <input type="number" class="form-control" id="sisa_hutang" name="sisa_hutang" step="0.01" min="0" value="<?= esc($agent['sisa_hutang']) ?>">
+      </div>
+
       <div class="action-buttons">
         <a href="/agents" class="btn-custom btn-back">
           <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-arrow-left">

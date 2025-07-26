@@ -48,7 +48,7 @@ class Agent extends BaseController
 
     public function update($id)
     {
-        $data = $this->request->getPost(['kode_agen', 'nama_agen']);
+        $data = $this->request->getPost(['kode_agen', 'nama_agen', 'tanggal_input_saldo', 'sisa_hutang']);
         $this->agentModel->update($id, $data);
         return redirect()->to('/agents')->with('message', 'Agen berhasil diperbarui');
     }

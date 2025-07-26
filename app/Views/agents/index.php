@@ -218,8 +218,8 @@
           <th>#</th>
           <th>Kode Agen</th>
           <th>Nama Agen</th>
-          <th>Created</th>
-          <th>Updated</th>
+          <th>Tanggal Input Saldo</th>
+          <th>Sisa Hutang Terakhir</th>
           <th class="text-center">Aksi</th>
         </tr>
       </thead>
@@ -240,8 +240,8 @@
               <td><?= $index + 1 ?></td>
               <td><?= esc($agent['kode_agen']) ?></td>
               <td><?= esc($agent['nama_agen']) ?></td>
-              <td><?= esc($agent['created_at']) ?></td>
-              <td><?= esc($agent['updated_at']) ?></td>
+              <td><?= esc(date("d-m-Y", strtotime($agent['tanggal_input_saldo']))) ?></td>
+              <td>Rp. <?= number_format(esc($agent['sisa_hutang']),2,',', '.') ?></td>
               <td class="text-center">
                 <div class="action-btns justify-content-center">
                   <a href="/agents/edit/<?= $agent['id'] ?>" class="btn-icon edit" title="Edit">

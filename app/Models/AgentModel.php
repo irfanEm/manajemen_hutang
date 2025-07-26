@@ -12,7 +12,7 @@ class AgentModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['kode_agen', 'nama_agen'];
+    protected $allowedFields    = ['kode_agen', 'nama_agen', 'tanggal_input_saldo', 'sisa_hutang'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
