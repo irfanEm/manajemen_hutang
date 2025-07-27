@@ -152,8 +152,6 @@
           <th>#</th>
           <th>Kode Metode</th>
           <th>Nama Metode</th>
-          <th>Dibuat</th>
-          <th>Diperbarui</th>
           <th class="text-center">Aksi</th>
         </tr>
       </thead>
@@ -173,8 +171,6 @@
               <td><?= $index + 1 ?></td>
               <td><?= esc($method['kode_metode']) ?></td>
               <td><?= esc($method['nama_metode']) ?></td>
-              <td><?= esc($method['created_at']) ?></td>
-              <td><?= esc($method['updated_at']) ?></td>
               <td class="text-center">
                 <div class="action-btns justify-content-center">
                   <a href="/payment-methods/edit/<?= $method['id'] ?>" class="btn-icon edit" title="Edit">

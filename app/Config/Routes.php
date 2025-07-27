@@ -30,3 +30,7 @@ $routes->post('/payment-methods/store', 'PaymentMethodController::store', ['filt
 $routes->get('/payment-methods/edit/(:num)', 'PaymentMethodController::edit/$1', ['filter' => 'auth']);
 $routes->put('/payment-methods/update/(:num)', 'PaymentMethodController::update/$1', ['filter' => 'auth']);
 $routes->post('/payment-methods/delete/(:num)', 'PaymentMethodController::delete/$1', ['filter' => 'auth']);
+// Hutang
+$routes->get('/hutang', 'Hutang::index', ['filter' => 'auth']);
+$routes->get('/hutang/detail/(:num)', 'Hutang::show/$1', ['filter' => 'auth']);
+$routes->get('/hutang/create', 'Hutang::new', ['filter' => 'auth']);

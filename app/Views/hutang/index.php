@@ -1,7 +1,8 @@
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
 
-<style>
+<!-- (style tetap sama seperti referensi sebelumnya, bisa kamu copy-paste dari agen) -->
+ <style>
   .page-title {
     font-size: 1.75rem;
     font-weight: 600;
@@ -198,13 +199,16 @@
 </style>
 
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-  <h1 class="page-title">Data Agen</h1>
-  <a href="/agents/create" class="btn btn-primary btn-sm d-flex align-items-center gap-1">
-  <i class="bi bi-plus-circle"></i>
-  Tambah Agen
-</a>
-
+  <h1 class="page-title">Data Hutang</h1>
+  <a href="/hutang/create" class="btn btn-primary btn-sm d-flex align-items-center gap-1">
+    <i class="bi bi-plus-circle"></i>
+    Tambah Hutang
+  </a>
 </div>
+
+<?php if (session()->getFlashdata('error')): ?>
+  <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
+<?php endif; ?>
 
 <?php if (session()->getFlashdata('message')): ?>
   <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
@@ -216,38 +220,41 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Kode Agen</th>
+          <th>ID Hutang</th>
           <th>Nama Agen</th>
-          <th>Tanggal Input Saldo</th>
-          <th>Sisa Hutang Terakhir</th>
+          <th>Tanggal Hutang</th>
+          <th>Metode Pembayaran</th>
+          <th>Sisa Hutang</th>
           <th class="text-center">Aksi</th>
         </tr>
       </thead>
       <tbody>
-        <?php if (empty($agents)): ?>
+        <?php if (empty($hutangs)): ?>
           <tr>
-            <td colspan="6" class="empty-state">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-person-x" viewBox="0 0 16 16">
-                <path d="M8 9a3 3 0 1 0-2.93-2.482 5.5 5.5 0 0 0-3.943 5.75A.5.5 0 0 0 1.62 13h8.759a.5.5 0 0 0 .493-.597 5.5 5.5 0 0 0-3.875-4.883A3 3 0 0 0 8 9z"/>
-                <path d="M11.854 5.146a.5.5 0 0 1 .707 0L14 6.586l1.439-1.44a.5.5 0 0 1 .707.708L14.707 7.293l1.439 1.439a.5.5 0 0 1-.707.707L14 8.007l-1.439 1.44a.5.5 0 1 1-.707-.708l1.439-1.439-1.439-1.44a.5.5 0 0 1 0-.707z"/>
+            <td colspan="7" class="empty-state">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-file-earmark-x" viewBox="0 0 16 16">
+                <path d="M6.854 5.146a.5.5 0 1 0-.708.708L7.293 7l-1.147 1.146a.5.5 0 0 0 .708.708L8 7.707l1.146 1.147a.5.5 0 0 0 .708-.708L8.707 7l1.147-1.146a.5.5 0 0 0-.708-.708L8 6.293 6.854 5.146z"/>
+                <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zM13 4.5L9.5 1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/>
               </svg><br>
-              Belum ada data agen.
+              Belum ada data hutang.
             </td>
           </tr>
         <?php else: ?>
-          <?php foreach ($agents as $index => $agent): ?>
+          <?php foreach ($hutangs as $index => $hutang): ?>
             <tr>
               <td><?= $index + 1 ?></td>
-              <td><?= esc($agent['kode_agen']) ?></td>
-              <td><?= esc($agent['nama_agen']) ?></td>
-              <td><?= $agent['tanggal_input_saldo'] ? esc(date("d-m-Y", strtotime($agent['tanggal_input_saldo']))) : "-" ?></td>
-              <td>Rp. <?= number_format(esc($agent['sisa_hutang']),2,',', '.') ?></td>
+              <td><?= esc($hutang['id_hutang']) ?></td>
+              <td><?= esc($hutang['nama_agen']) ?></td>
+              <td><?= date('d-m-Y', strtotime($hutang['tanggal_hutang'])) ?></td>
+              <td><?= esc($hutang['nama_metode']) ?></td>
+              <td>Rp. <?= number_format($hutang['sisa_hutang'], 2, ',', '.') ?></td>
               <td class="text-center">
                 <div class="action-btns justify-content-center">
-                  <a href="/agents/edit/<?= $agent['id'] ?>" class="btn-icon edit" title="Edit">
+                  <a href="/hutang/edit/<?= $hutang['id'] ?>" class="btn-icon edit" title="Edit">
                     <i class="bi bi-pencil"></i>
                   </a>
-                  <form action="/agents/delete/<?= $agent['id'] ?>" method="post" onsubmit="return confirm('Yakin ingin menghapus agen ini?')" style="display:inline;">
+                  <form action="/hutang/delete/<?= $hutang['id'] ?>" method="post" onsubmit="return confirm('Yakin ingin menghapus data hutang ini?')" style="display:inline;">
+                    <?= csrf_field() ?>
                     <button type="submit" class="btn-icon delete" title="Hapus">
                       <i class="bi bi-trash"></i>
                     </button>
