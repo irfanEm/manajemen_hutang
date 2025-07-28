@@ -29,7 +29,7 @@ class Hutang extends ResourceController
     {
         $hutangs = $this->hutangModel
                     ->select('hutangs.*, agents.nama_agen, payment_methods.nama_metode')
-                    ->join('agents', 'agents.id = hutangs.id_hutang')
+                    ->join('agents', 'agents.id = hutangs.id_agent')
                     ->join('payment_methods', 'payment_methods.id = hutangs.id_metode_pembayaran')
                     ->orderBy('hutangs.created_at', 'DESC')
                     ->findAll();
@@ -83,37 +83,50 @@ class Hutang extends ResourceController
 
         $data['id_hutang'] = "HT-" . date('YmdHis') . $data['id_agent'];
 
+        $data['sisa_hutang'] = (float) $data['sisa_hutang'];
+
         $agent = $this->agentModel->find($data['id_agent']);
         if(!$agent){
             return redirect()->back()->withInput()->with('error', 'Agen tidak ditemukan !');
         }
 
-        $data['sisa_hutang'] = (float) $data['sisa_hutang'];
-        $tipe = $data['tipe_pembayaran'];
+        $existingHutang = $this->hutangModel
+                            ->where('id_agent', $data['id_agent'])
+                            ->first();
+                            
+        if($existingHutang) {
+            if($data['tipe_pembayaran'] === 'hutang') {
+                $newHutang = $existingHutang['sisa_hutang'] + $data['sisa_hutang'];
 
-        $this->hutangModel->save($data);
+                $this->hutangModel->update($existingHutang['id'], [
+                    'sisa_hutang' => $newHutang,
+                    'tanggal_hutang' => $data['tanggal_hutang'],
+                    'id_metode_pembayaran' => $data['id_metode_pembayaran']
+                ]);
 
-        if($tipe === 'tambah'){
-            $agent['sisa_hutang'] += $data['sisa_hutang'];
-        }elseif($tipe === 'bayar'){
-            $agent['sisa_hutang'] -= $data['sisa_hutang'];
-            if($agent['sisa_hutang'] < 0) {$agent['sisa_hutang'] = 0; }
-        }
+                $agent['sisa_hutang'] = $newHutang;
+                $this->agentModel->update($agent['id'], $agent);
+            } elseif($data['tipe_pembayaran'] === 'bayar') {
+                $newHutang = $existingHutang['sisa_hutang'] - $data['sisa_hutang'];
+                if($newHutang < 0) {
+                    $newHutang = 0;
+                }
 
-        // dd($data);
-        if($data['tipe_pembayaran'] === "bayar"){
-            echo 'bayar hutang';
-        }
-        if($agent['sisa_hutang'] === "0.00") {
-            $this->hutangModel->save($data);
-            $agent['sisa_hutang'] = $data['sisa_hutang'];
-            $this->agentModel->update($agent['id'], $agent);
+                $this->hutangModel->update($existingHutang['id'], [
+                    'sisa_hutang' => $newHutang,
+                    'tanggal_hutang' => $data['tanggal_hutang'],
+                    'id_metode_pembayaran' => $data['id_metode_pembayaran']
+                ]);
+
+                $agent['sisa_hutang'] = $newHutang;
+                $this->agentModel->update($agent['id'], $agent);
+            }
         }else{
-            $data['sisa_hutang'] += $agent['sisa_hutang'];
-            $this->hutangModel->update($data['id'], $data);
+            $this->hutangModel->save($data);
+            $this->agentModel->update($agent['id'], $agent);
         }
-        // $this->hutangModel->save($data);
-        // return redirect()->to('/hutang')->with('message', 'Berhasil menambah data hutang.');
+
+        return redirect()->to('/hutang')->with('message', 'Berhasil memproses data hutang.');
     }
 
     public function bayarHutang(int $agent)
