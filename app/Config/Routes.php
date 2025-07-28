@@ -34,3 +34,4 @@ $routes->post('/payment-methods/delete/(:num)', 'PaymentMethodController::delete
 $routes->get('/hutang', 'Hutang::index', ['filter' => 'auth']);
 $routes->get('/hutang/detail/(:num)', 'Hutang::show/$1', ['filter' => 'auth']);
 $routes->get('/hutang/create', 'Hutang::new', ['filter' => 'auth']);
+$routes->post('/hutang/store', 'Hutang::create', ['filter' => 'auth']);

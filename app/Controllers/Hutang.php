@@ -80,12 +80,46 @@ class Hutang extends ResourceController
     public function create()
     {
         $data = $this->request->getPost(['tipe_pembayaran', 'id_agent', 'sisa_hutang', 'tanggal_hutang', 'id_metode_pembayaran']);
+
         $data['id_hutang'] = "HT-" . date('YmdHis') . $data['id_agent'];
 
+        $agent = $this->agentModel->find($data['id_agent']);
+        if(!$agent){
+            return redirect()->back()->withInput()->with('error', 'Agen tidak ditemukan !');
+        }
+
+        $data['sisa_hutang'] = (float) $data['sisa_hutang'];
+        $tipe = $data['tipe_pembayaran'];
+
         $this->hutangModel->save($data);
-        return redirect()->to('/hutang')->with('message', 'Berhasil menambah data hutang.');
+
+        if($tipe === 'tambah'){
+            $agent['sisa_hutang'] += $data['sisa_hutang'];
+        }elseif($tipe === 'bayar'){
+            $agent['sisa_hutang'] -= $data['sisa_hutang'];
+            if($agent['sisa_hutang'] < 0) {$agent['sisa_hutang'] = 0; }
+        }
+
+        // dd($data);
+        if($data['tipe_pembayaran'] === "bayar"){
+            echo 'bayar hutang';
+        }
+        if($agent['sisa_hutang'] === "0.00") {
+            $this->hutangModel->save($data);
+            $agent['sisa_hutang'] = $data['sisa_hutang'];
+            $this->agentModel->update($agent['id'], $agent);
+        }else{
+            $data['sisa_hutang'] += $agent['sisa_hutang'];
+            $this->hutangModel->update($data['id'], $data);
+        }
+        // $this->hutangModel->save($data);
+        // return redirect()->to('/hutang')->with('message', 'Berhasil menambah data hutang.');
     }
 
+    public function bayarHutang(int $agent)
+    {
+
+    }
     /**
      * Return the editable properties of a resource object.
      *

@@ -101,16 +101,7 @@
 
     <form action="/hutang/store" method="post">
       <?= csrf_field() ?>
-
-      <div class="mb-3">
-        <label for="tipe_pembayaran" class="form-label">Tipe Pembayaran</label>
-        <select class="form-control" id="tipe_pembayaran" name="tipe_pembayaran" required>
-          <option value="">-- Pilih Tipe --</option>
-          <option value="hutang">Tambah Hutang</option>
-          <option value="bayar">Bayar Hutang</option>
-        </select>
-      </div>
-
+      
       <div class="mb-3">
         <label for="id_agent" class="form-label">Agen</label>
         <select class="form-control" id="id_agent" name="id_agent" required>
@@ -130,16 +121,25 @@
         <label for="tanggal_hutang" class="form-label">Tanggal</label>
         <input type="datetime-local" class="form-control" id="tanggal_hutang" name="tanggal_hutang" required>
       </div>
-
+      
       <div class="mb-3">
         <label for="id_metode_pembayaran" class="form-label">Metode Pembayaran</label>
         <select class="form-control" id="id_metode_pembayaran" name="id_metode_pembayaran" required>
           <option value="">-- Pilih Metode Pembayaran --</option>
           <?php foreach ($payment_methods as $method): ?>
             <option value="<?= $method['id'] ?>"><?= $method['nama_metode'] ?></option>
-          <?php endforeach ?>
-        </select>
-      </div>
+            <?php endforeach ?>
+          </select>
+        </div>
+        
+        <div class="mb-3">
+          <label for="tipe_pembayaran" class="form-label">Jenis Pembayaran</label>
+          <select class="form-control" id="tipe_pembayaran" name="tipe_pembayaran" required>
+            <option value="">-- Pilih Tipe --</option>
+            <option value="hutang">Tambah Hutang</option>
+            <option value="bayar">Bayar Hutang</option>
+          </select>
+        </div>
 
       <div class="action-buttons">
         <a href="/hutang" class="btn-custom btn-back">
