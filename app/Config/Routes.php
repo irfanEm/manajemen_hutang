@@ -35,3 +35,5 @@ $routes->get('/hutang', 'Hutang::index', ['filter' => 'auth']);
 $routes->get('/hutang/detail/(:num)', 'Hutang::show/$1', ['filter' => 'auth']);
 $routes->get('/hutang/create', 'Hutang::new', ['filter' => 'auth']);
 $routes->post('/hutang/store', 'Hutang::create', ['filter' => 'auth']);
+$routes->get('/hutang/edit/(:num)', 'Hutang::edit/$1', ['filter' => 'auth']);
+$routes->put('/hutang/update/(:num)', 'Hutang::update/$1', ['filter' => 'auth']);

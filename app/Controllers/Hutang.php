@@ -157,7 +157,22 @@ class Hutang extends ResourceController
      */
     public function edit($id = null)
     {
-        //
+        if(!$id) {
+            return redirect()->to('/hutang')->with('error', 'Id tidak valid !');
+        }
+
+        $hutang = $this->hutangModel->find($id);
+
+        if(!$hutang) {
+            return redirect()->to('/hutang')->with('error', 'Hutang tidak ditemukan !');
+        }
+
+        return view('hutang/edit', [
+            'title' => 'Edit hutang', 
+            'hutang' => $hutang,
+            'agents' => $this->agentModel->findAll(),
+            'payments' => $this->methodModel->findAll(),
+        ]);
     }
 
     /**
@@ -169,7 +184,57 @@ class Hutang extends ResourceController
      */
     public function update($id = null)
     {
-        //
+        if($id === null){
+            return redirect()->back()->with('error', 'ID hutang tidak valid !');
+        }
+
+        $rules = [
+            'id_agent' => 'required|is_not_unique[agents.id]',
+            'sisa_hutang' => 'required|numeric|min_length[1]|greater_than_equal_to[0]',
+            'tanggal_hutang' => 'required|valid_date',
+            'id_metode_pembayaran' => 'required|is_not_unique[payment_methods.id]'
+        ];
+
+        $messages = [
+            'id_agent' => [
+                'required' => 'Agen wajib dipilih !',
+                'is_not_unique' => 'Agen tidak ditemukan !'
+            ],
+            'sisa_hutang' => [
+                'required' => 'Sisa hutang wajib diisi !',
+                'numeric' => 'Sisa hutang harus berupa angka !',
+                'greater_than_equal_to' => 'Sisa hutang tidak boleh bernilai negatif !',
+            ],
+            'tanggal_hutang' => [
+                'required' => 'Tanggal hutang wajib diisi !',
+                'valid_date' => 'Tanggal hutang harus berupa tanggal yang valid !'
+            ],
+            'id_metode_pembayaran' => [
+                'required' => 'Metode pembayaran wajib dipilih !',
+                'is_not_unique' => 'Metode pembayaran tidak ditemukan !'
+            ]
+        ];
+
+        if(!$this->validate($rules, $messages)){
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $data = $this->request->getPost(['id_agent', 'sisa_hutang', 'tanggal_hutang', 'id_metode_pembayaran']);
+        $data['sisa_hutang'] = (float) $data['sisa_hutang'];
+
+        try{
+
+            $this->hutangModel->update($id, $data);
+
+            $this->agentModel->update($data['id_agent'],[
+                'sisa_hutang' => $data['sisa_hutang'],
+            ]);
+
+            return redirect()->to('/hutang')->with('message', 'Yey ! update data hutang berhasil.');
+        }catch(Exception $err) {
+            log_message('error', 'Gagal mengubah data hutang : ' . $err->getMessage());
+            return redirect()->to('/hutang/edit/' . $id)->with('error','Duh ! sepertinya ada masalah saat mengupdate data hutang.');
+        }
     }
 
     /**
@@ -181,6 +246,16 @@ class Hutang extends ResourceController
      */
     public function delete($id = null)
     {
-        //
+        if(!$id){
+            return redirect()->back()->with('error', 'oops ! datanya ngga ada.');
+        }
+
+        try{
+            $this->hutangModel->delete($id);
+            return redirect()->to('/hutang')->with('message', 'Datanya udah kehapus, jangan nyesel yah.');
+        } catch(\Exception $err) {
+            log_message('error', 'Gagal menghapus data hutang : ' . $err->getMessage());
+            return redirect()->to('/hutang')->with('error', 'Ops ! datanya gagal dihapus, sepertinya ada yang salah.');
+        }
     }
 }
