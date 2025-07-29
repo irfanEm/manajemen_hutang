@@ -5,20 +5,24 @@ namespace App\Controllers;
 use App\Models\AgentModel;
 use App\Models\HutangModel;
 use App\Models\PaymentMethod;
+use App\Models\RiwayatHutangModel;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
+use Exception;
 
 class Hutang extends ResourceController
 {
     public HutangModel $hutangModel;
     public AgentModel $agentModel;
     public PaymentMethod $methodModel;
+    public RiwayatHutangModel $riwayatHutangModel;
 
     public function __construct()
     {
         $this->hutangModel = new HutangModel();
         $this->agentModel = new AgentModel();
         $this->methodModel = new PaymentMethod();
+        $this->riwayatHutangModel = new RiwayatHutangModel();
     }
     /**
      * Return an array of resource objects, themselves in array format.
@@ -126,12 +130,23 @@ class Hutang extends ResourceController
             $this->agentModel->update($agent['id'], $agent);
         }
 
+        $this->insertRiwayatHutang([
+            'id_agent' => $data['id_agent'],
+            'tipe_pembayaran' => $data['tipe_pembayaran'],
+            'nominal' => $data['sisa_hutang'],
+            'tanggal_pembayaran' => $data['tanggal_hutang'],
+            'penginput' => session()->get('user_name')
+        ]);
         return redirect()->to('/hutang')->with('message', 'Berhasil memproses data hutang.');
     }
 
-    public function bayarHutang(int $agent)
+    public function insertRiwayatHutang(array $data)
     {
-
+            try{
+                $this->riwayatHutangModel->save($data);
+            }catch(Exception $err) {
+                log_message('error', 'Gagal insert riwayat hutang : ' . $err->getMessage());
+            }
     }
     /**
      * Return the editable properties of a resource object.
