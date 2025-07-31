@@ -51,6 +51,7 @@
 <body>
 
   <div class="container d-flex justify-content-center align-items-center min-vh-100">
+
     <div class="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4 login-card">
 
       <div class="text-center mb-4">
@@ -59,12 +60,18 @@
 
       <h4 class="text-center login-title"><?= esc($title) ?></h4>
 
-      <?php if (session()->getFlashdata('error')): ?>
-        <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
+      <?php if(session()->getFlashdata('error')) : ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <?= session()->getFlashdata('error') ?>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
       <?php endif; ?>
 
-      <?php if (session()->getFlashdata('message')): ?>
-        <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
+      <?php if(session()->getFlashdata('message')) : ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <?= session()->getFlashdata('message') ?>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
       <?php endif; ?>
 
       <form action="/login" method="post" novalidate>

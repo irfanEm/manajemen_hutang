@@ -127,6 +127,8 @@ class Hutang extends ResourceController
             }
         }else{
             $this->hutangModel->save($data);
+            $agent['sisa_hutang'] = $data['sisa_hutang'];
+            $agent['tanggal_input_saldo'] = date('Y-m-d H:i:s');
             $this->agentModel->update($agent['id'], $agent);
         }
 
@@ -249,8 +251,17 @@ class Hutang extends ResourceController
         if(!$id){
             return redirect()->back()->with('error', 'oops ! datanya ngga ada.');
         }
+        
+        $hutang = $this->hutangModel->find($id);
+        
+        if(!$hutang){
+            return redirect()->back()->with('error', 'oops ! datanya ngga ada.');
+        }
+        $agent = $this->agentModel->find($hutang['id_agent']);
 
         try{
+            $agent['sisa_hutang'] = (float) 0;
+            $this->agentModel->update($agent['id'], $agent);
             $this->hutangModel->delete($id);
             return redirect()->to('/hutang')->with('message', 'Datanya udah kehapus, jangan nyesel yah.');
         } catch(\Exception $err) {

@@ -14,6 +14,7 @@ $routes->get('/test', static function(){
 // login
 $routes->get('/login', 'Auth::login');
 $routes->post('/login', 'Auth::doLogin');
+$routes->get('/logout', 'Auth::logout', ['filter' => 'auth']);
 // dashboard
 $routes->get('/dashboard', 'Home::dashboard', ['filter' => 'auth']);
 // agents
@@ -37,3 +38,9 @@ $routes->get('/hutang/create', 'Hutang::new', ['filter' => 'auth']);
 $routes->post('/hutang/store', 'Hutang::create', ['filter' => 'auth']);
 $routes->get('/hutang/edit/(:num)', 'Hutang::edit/$1', ['filter' => 'auth']);
 $routes->put('/hutang/update/(:num)', 'Hutang::update/$1', ['filter' => 'auth']);
+$routes->post('/hutang/delete/(:num)', 'Hutang::delete/$1', ['filter' => 'auth']);
+// Laporan 
+$routes->get('/laporan', 'Laporan::index', ['filter' => 'auth']);
+$routes->get('/laporan/filter', 'Laporan::filter', ['filter' => 'auth']);
+$routes->get('/laporan/export/pdf', 'Laporan::exportPdf', ['filter' => 'auth']);
+$routes->get('/laporan/export/excel', 'Laporan::exportExcel', ['filter' => 'auth']);

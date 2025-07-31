@@ -8,11 +8,6 @@ use CodeIgniter\HTTP\ResponseInterface;
 
 class Auth extends BaseController
 {
-    public function index()
-    {
-        //
-    }
-
     public function login()
     {
         $data = [
@@ -26,6 +21,10 @@ class Auth extends BaseController
     {
         $email = $this->request->getPost('email');
         $password = $this->request->getPost('password');
+
+        if(!$email | !$password) {
+            return redirect()->back()->with('error', 'Email atau password jangan kosong !');
+        }
 
         $userModel = new UserModel();
         $user = $userModel->where('email', $email)->first();
@@ -43,4 +42,15 @@ class Auth extends BaseController
 
         return redirect()->to('/dashboard')->with("message", "Login berhasil, Selamat datang di Dashboard {$user['nama']}");
     }
+
+    public function logout()
+    {
+        session()->setFlashdata('message', 'Sampai berjumpa kembali ✌🏻');
+
+        // Hapus satu per satu data yang tidak dibutuhkan
+        session()->remove(['user_id', 'user_name', 'user_email', 'logged_in']);
+
+        return redirect()->to('/login');
+    }
+
 }
